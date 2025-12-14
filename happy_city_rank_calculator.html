@@ -1,0 +1,2716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy City Index - Rank Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .value-display {
+            min-width: 50px;
+            text-align: center;
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .result-item {
+            margin: 10px 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .result-item strong {
+            color: #667eea;
+        }
+
+        .total-score {
+            font-size: 1.3em;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏙️ Happy City Index</h1>
+        <p class="subtitle">Enter indicator scores to find matching city rank</p>
+
+        <form id="scoreForm">
+            <div class="input-group">
+                <label for="citizens">Citizens</label>
+                <div class="slider-container">
+                    <input type="range" id="citizens" min="0" max="300" value="150">
+                    <span class="value-display" id="citizens-value">150</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="governance">Governance</label>
+                <div class="slider-container">
+                    <input type="range" id="governance" min="0" max="300" value="150">
+                    <span class="value-display" id="governance-value">150</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="environment">Environment</label>
+                <div class="slider-container">
+                    <input type="range" id="environment" min="0" max="300" value="150">
+                    <span class="value-display" id="environment-value">150</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="economy">Economy</label>
+                <div class="slider-container">
+                    <input type="range" id="economy" min="0" max="300" value="150">
+                    <span class="value-display" id="economy-value">150</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="health">Health</label>
+                <div class="slider-container">
+                    <input type="range" id="health" min="0" max="300" value="150">
+                    <span class="value-display" id="health-value">150</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="mobility">Mobility</label>
+                <div class="slider-container">
+                    <input type="range" id="mobility" min="0" max="300" value="150">
+                    <span class="value-display" id="mobility-value">150</span>
+                </div>
+            </div>
+
+            <button type="submit">Calculate Rank</button>
+        </form>
+
+        <div class="result" id="result">
+            <h2>Results</h2>
+            <div class="result-item"><strong>Closest Match:</strong> <span id="city-name"></span></div>
+            <div class="result-item"><strong>Country:</strong> <span id="country-name"></span></div>
+            <div class="result-item"><strong>Rank:</strong> <span id="rank"></span></div>
+            <div class="result-item total-score"><strong>Your Total Score:</strong> <span id="total-score"></span></div>
+            <div class="result-item"><strong>City's Total Score:</strong> <span id="city-total-score"></span></div>
+        </div>
+    </div>
+
+    <script>
+        // City data will be inserted here
+        const cities = [
+  {
+    "rank": 1,
+    "city": "Copenhagen",
+    "country": "Denmark",
+    "total_points": 1039,
+    "citizens": 237,
+    "governance": 177,
+    "environment": 192,
+    "economy": 182,
+    "health": 149,
+    "mobility": 101
+  },
+  {
+    "rank": 2,
+    "city": "Zurich",
+    "country": "Switzerland",
+    "total_points": 993,
+    "citizens": 256,
+    "governance": 185,
+    "environment": 175,
+    "economy": 174,
+    "health": 122,
+    "mobility": 80
+  },
+  {
+    "rank": 3,
+    "city": "Singapore",
+    "country": "Singapore",
+    "total_points": 979,
+    "citizens": 210,
+    "governance": 192,
+    "environment": 151,
+    "economy": 174,
+    "health": 149,
+    "mobility": 101
+  },
+  {
+    "rank": 4,
+    "city": "Aarhus",
+    "country": "Denmark",
+    "total_points": 958,
+    "citizens": 233,
+    "governance": 173,
+    "environment": 170,
+    "economy": 143,
+    "health": 145,
+    "mobility": 95
+  },
+  {
+    "rank": 5,
+    "city": "Antwerp",
+    "country": "Belgium",
+    "total_points": 956,
+    "citizens": 258,
+    "governance": 205,
+    "environment": 148,
+    "economy": 100,
+    "health": 145,
+    "mobility": 100
+  },
+  {
+    "rank": 6,
+    "city": "Seoul",
+    "country": "South Korea",
+    "total_points": 942,
+    "citizens": 260,
+    "governance": 206,
+    "environment": 153,
+    "economy": 100,
+    "health": 117,
+    "mobility": 106
+  },
+  {
+    "rank": 7,
+    "city": "Stockholm",
+    "country": "Sweden",
+    "total_points": 941,
+    "citizens": 270,
+    "governance": 183,
+    "environment": 143,
+    "economy": 111,
+    "health": 136,
+    "mobility": 98
+  },
+  {
+    "rank": 8,
+    "city": "Taipei",
+    "country": "Taiwan",
+    "total_points": 936,
+    "citizens": 158,
+    "governance": 210,
+    "environment": 192,
+    "economy": 126,
+    "health": 120,
+    "mobility": 131
+  },
+  {
+    "rank": 9,
+    "city": "Munich",
+    "country": "Germany",
+    "total_points": 931,
+    "citizens": 250,
+    "governance": 175,
+    "environment": 114,
+    "economy": 110,
+    "health": 176,
+    "mobility": 105
+  },
+  {
+    "rank": 10,
+    "city": "Rotterdam",
+    "country": "Netherlands",
+    "total_points": 920,
+    "citizens": 192,
+    "governance": 166,
+    "environment": 188,
+    "economy": 92,
+    "health": 176,
+    "mobility": 106
+  },
+  {
+    "rank": 11,
+    "city": "Vancouver",
+    "country": "Canada",
+    "total_points": 919,
+    "citizens": 242,
+    "governance": 168,
+    "environment": 222,
+    "economy": 65,
+    "health": 122,
+    "mobility": 101
+  },
+  {
+    "rank": 12,
+    "city": "Vienna",
+    "country": "Austria",
+    "total_points": 918,
+    "citizens": 227,
+    "governance": 209,
+    "environment": 170,
+    "economy": 73,
+    "health": 135,
+    "mobility": 105
+  },
+  {
+    "rank": 13,
+    "city": "Paris",
+    "country": "France",
+    "total_points": 909,
+    "citizens": 177,
+    "governance": 189,
+    "environment": 207,
+    "economy": 145,
+    "health": 85,
+    "mobility": 105
+  },
+  {
+    "rank": 14,
+    "city": "Helsinki",
+    "country": "Finland",
+    "total_points": 908,
+    "citizens": 239,
+    "governance": 201,
+    "environment": 133,
+    "economy": 111,
+    "health": 130,
+    "mobility": 93
+  },
+  {
+    "rank": 15,
+    "city": "Aalborg",
+    "country": "Denmark",
+    "total_points": 906,
+    "citizens": 267,
+    "governance": 152,
+    "environment": 119,
+    "economy": 133,
+    "health": 142,
+    "mobility": 93
+  },
+  {
+    "rank": 16,
+    "city": "Berlin",
+    "country": "Germany",
+    "total_points": 905,
+    "citizens": 161,
+    "governance": 203,
+    "environment": 182,
+    "economy": 121,
+    "health": 146,
+    "mobility": 93
+  },
+  {
+    "rank": 17,
+    "city": "New York, NY",
+    "country": "United States",
+    "total_points": 902,
+    "citizens": 158,
+    "governance": 226,
+    "environment": 162,
+    "economy": 142,
+    "health": 97,
+    "mobility": 116
+  },
+  {
+    "rank": 18,
+    "city": "Dresden",
+    "country": "Germany",
+    "total_points": 893,
+    "citizens": 206,
+    "governance": 205,
+    "environment": 146,
+    "economy": 64,
+    "health": 162,
+    "mobility": 110
+  },
+  {
+    "rank": 19,
+    "city": "Brussels",
+    "country": "Belgium",
+    "total_points": 887,
+    "citizens": 226,
+    "governance": 198,
+    "environment": 116,
+    "economy": 103,
+    "health": 132,
+    "mobility": 113
+  },
+  {
+    "rank": 20,
+    "city": "Geneva",
+    "country": "Switzerland",
+    "total_points": 883,
+    "citizens": 212,
+    "governance": 143,
+    "environment": 173,
+    "economy": 151,
+    "health": 114,
+    "mobility": 90
+  },
+  {
+    "rank": 21,
+    "city": "Porto",
+    "country": "Portugal",
+    "total_points": 879,
+    "citizens": 194,
+    "governance": 202,
+    "environment": 151,
+    "economy": 94,
+    "health": 159,
+    "mobility": 80
+  },
+  {
+    "rank": 22,
+    "city": "Barcelona",
+    "country": "Spain",
+    "total_points": 875,
+    "citizens": 181,
+    "governance": 192,
+    "environment": 158,
+    "economy": 63,
+    "health": 150,
+    "mobility": 130
+  },
+  {
+    "rank": 23,
+    "city": "Oslo",
+    "country": "Norway",
+    "total_points": 870,
+    "citizens": 228,
+    "governance": 175,
+    "environment": 134,
+    "economy": 120,
+    "health": 151,
+    "mobility": 61
+  },
+  {
+    "rank": 24,
+    "city": "Dublin",
+    "country": "Ireland",
+    "total_points": 862,
+    "citizens": 160,
+    "governance": 197,
+    "environment": 175,
+    "economy": 94,
+    "health": 136,
+    "mobility": 99
+  },
+  {
+    "rank": 25,
+    "city": "Milan",
+    "country": "Italy",
+    "total_points": 856,
+    "citizens": 138,
+    "governance": 205,
+    "environment": 166,
+    "economy": 81,
+    "health": 156,
+    "mobility": 109
+  },
+  {
+    "rank": 26,
+    "city": "Roskilde",
+    "country": "Denmark",
+    "total_points": 855,
+    "citizens": 273,
+    "governance": 137,
+    "environment": 175,
+    "economy": 84,
+    "health": 135,
+    "mobility": 50
+  },
+  {
+    "rank": 27,
+    "city": "Reykjavik",
+    "country": "Iceland",
+    "total_points": 854,
+    "citizens": 253,
+    "governance": 185,
+    "environment": 93,
+    "economy": 87,
+    "health": 145,
+    "mobility": 91
+  },
+  {
+    "rank": 28,
+    "city": "Auckland",
+    "country": "New Zealand",
+    "total_points": 853,
+    "citizens": 139,
+    "governance": 168,
+    "environment": 183,
+    "economy": 110,
+    "health": 147,
+    "mobility": 105
+  },
+  {
+    "rank": 29,
+    "city": "Adelaide",
+    "country": "Australia",
+    "total_points": 846,
+    "citizens": 186,
+    "governance": 140,
+    "environment": 217,
+    "economy": 71,
+    "health": 132,
+    "mobility": 100
+  },
+  {
+    "rank": 30,
+    "city": "Minneapolis, MN",
+    "country": "United States",
+    "total_points": 845,
+    "citizens": 135,
+    "governance": 155,
+    "environment": 179,
+    "economy": 172,
+    "health": 101,
+    "mobility": 104
+  },
+  {
+    "rank": 31,
+    "city": "London",
+    "country": "United Kingdom",
+    "total_points": 842,
+    "citizens": 198,
+    "governance": 186,
+    "environment": 144,
+    "economy": 93,
+    "health": 88,
+    "mobility": 133
+  },
+  {
+    "rank": 32,
+    "city": "Leuven",
+    "country": "Belgium",
+    "total_points": 840,
+    "citizens": 231,
+    "governance": 125,
+    "environment": 144,
+    "economy": 97,
+    "health": 145,
+    "mobility": 98
+  },
+  {
+    "rank": 33,
+    "city": "Lyon",
+    "country": "France",
+    "total_points": 838,
+    "citizens": 170,
+    "governance": 189,
+    "environment": 149,
+    "economy": 128,
+    "health": 91,
+    "mobility": 111
+  },
+  {
+    "rank": 34,
+    "city": "San Diego, CA",
+    "country": "United States",
+    "total_points": 831,
+    "citizens": 159,
+    "governance": 182,
+    "environment": 190,
+    "economy": 92,
+    "health": 114,
+    "mobility": 95
+  },
+  {
+    "rank": 35,
+    "city": "Bruges",
+    "country": "Belgium",
+    "total_points": 830,
+    "citizens": 206,
+    "governance": 170,
+    "environment": 148,
+    "economy": 92,
+    "health": 142,
+    "mobility": 73
+  },
+  {
+    "rank": 35,
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "total_points": 830,
+    "citizens": 195,
+    "governance": 168,
+    "environment": 164,
+    "economy": 49,
+    "health": 172,
+    "mobility": 82
+  },
+  {
+    "rank": 37,
+    "city": "Utrecht",
+    "country": "Netherlands",
+    "total_points": 828,
+    "citizens": 183,
+    "governance": 140,
+    "environment": 159,
+    "economy": 116,
+    "health": 170,
+    "mobility": 60
+  },
+  {
+    "rank": 38,
+    "city": "Turin",
+    "country": "Italy",
+    "total_points": 824,
+    "citizens": 148,
+    "governance": 203,
+    "environment": 150,
+    "economy": 100,
+    "health": 135,
+    "mobility": 88
+  },
+  {
+    "rank": 39,
+    "city": "Ghent",
+    "country": "Belgium",
+    "total_points": 823,
+    "citizens": 242,
+    "governance": 174,
+    "environment": 146,
+    "economy": 34,
+    "health": 141,
+    "mobility": 85
+  },
+  {
+    "rank": 40,
+    "city": "Randers",
+    "country": "Denmark",
+    "total_points": 822,
+    "citizens": 220,
+    "governance": 136,
+    "environment": 173,
+    "economy": 109,
+    "health": 135,
+    "mobility": 49
+  },
+  {
+    "rank": 41,
+    "city": "Ljubljana",
+    "country": "Slovenia",
+    "total_points": 817,
+    "citizens": 188,
+    "governance": 164,
+    "environment": 150,
+    "economy": 72,
+    "health": 154,
+    "mobility": 88
+  },
+  {
+    "rank": 42,
+    "city": "Tokyo",
+    "country": "Japan",
+    "total_points": 814,
+    "citizens": 246,
+    "governance": 164,
+    "environment": 80,
+    "economy": 123,
+    "health": 148,
+    "mobility": 52
+  },
+  {
+    "rank": 43,
+    "city": "Washington, DC",
+    "country": "United States",
+    "total_points": 813,
+    "citizens": 122,
+    "governance": 202,
+    "environment": 177,
+    "economy": 122,
+    "health": 99,
+    "mobility": 92
+  },
+  {
+    "rank": 44,
+    "city": "Holstebro",
+    "country": "Denmark",
+    "total_points": 812,
+    "citizens": 214,
+    "governance": 135,
+    "environment": 172,
+    "economy": 108,
+    "health": 134,
+    "mobility": 49
+  },
+  {
+    "rank": 45,
+    "city": "Ballerup",
+    "country": "Denmark",
+    "total_points": 811,
+    "citizens": 186,
+    "governance": 133,
+    "environment": 169,
+    "economy": 150,
+    "health": 125,
+    "mobility": 48
+  },
+  {
+    "rank": 46,
+    "city": "Graz",
+    "country": "Austria",
+    "total_points": 811,
+    "citizens": 213,
+    "governance": 178,
+    "environment": 87,
+    "economy": 91,
+    "health": 133,
+    "mobility": 109
+  },
+  {
+    "rank": 47,
+    "city": "Linz",
+    "country": "Austria",
+    "total_points": 806,
+    "citizens": 154,
+    "governance": 173,
+    "environment": 156,
+    "economy": 50,
+    "health": 177,
+    "mobility": 96
+  },
+  {
+    "rank": 47,
+    "city": "Basel",
+    "country": "Switzerland",
+    "total_points": 806,
+    "citizens": 172,
+    "governance": 140,
+    "environment": 170,
+    "economy": 148,
+    "health": 115,
+    "mobility": 60
+  },
+  {
+    "rank": 49,
+    "city": "Liege",
+    "country": "Belgium",
+    "total_points": 802,
+    "citizens": 226,
+    "governance": 170,
+    "environment": 110,
+    "economy": 81,
+    "health": 130,
+    "mobility": 85
+  },
+  {
+    "rank": 50,
+    "city": "Eindhoven",
+    "country": "Netherlands",
+    "total_points": 801,
+    "citizens": 186,
+    "governance": 142,
+    "environment": 161,
+    "economy": 77,
+    "health": 176,
+    "mobility": 60
+  },
+  {
+    "rank": 51,
+    "city": "Canberra",
+    "country": "Australia",
+    "total_points": 794,
+    "citizens": 195,
+    "governance": 179,
+    "environment": 131,
+    "economy": 62,
+    "health": 137,
+    "mobility": 88
+  },
+  {
+    "rank": 52,
+    "city": "Bilbao",
+    "country": "Spain",
+    "total_points": 793,
+    "citizens": 233,
+    "governance": 178,
+    "environment": 96,
+    "economy": 48,
+    "health": 147,
+    "mobility": 91
+  },
+  {
+    "rank": 53,
+    "city": "Espoo",
+    "country": "Finland",
+    "total_points": 792,
+    "citizens": 234,
+    "governance": 142,
+    "environment": 116,
+    "economy": 122,
+    "health": 127,
+    "mobility": 51
+  },
+  {
+    "rank": 54,
+    "city": "Beijing",
+    "country": "China",
+    "total_points": 784,
+    "citizens": 120,
+    "governance": 207,
+    "environment": 82,
+    "economy": 130,
+    "health": 135,
+    "mobility": 110
+  },
+  {
+    "rank": 55,
+    "city": "Busan",
+    "country": "South Korea",
+    "total_points": 782,
+    "citizens": 204,
+    "governance": 170,
+    "environment": 128,
+    "economy": 78,
+    "health": 114,
+    "mobility": 88
+  },
+  {
+    "rank": 56,
+    "city": "Salt Lake City, UT",
+    "country": "United States",
+    "total_points": 780,
+    "citizens": 174,
+    "governance": 171,
+    "environment": 108,
+    "economy": 110,
+    "health": 111,
+    "mobility": 106
+  },
+  {
+    "rank": 57,
+    "city": "Dusseldorf",
+    "country": "Germany",
+    "total_points": 779,
+    "citizens": 180,
+    "governance": 178,
+    "environment": 114,
+    "economy": 81,
+    "health": 154,
+    "mobility": 71
+  },
+  {
+    "rank": 58,
+    "city": "Bern",
+    "country": "Switzerland",
+    "total_points": 778,
+    "citizens": 172,
+    "governance": 142,
+    "environment": 172,
+    "economy": 110,
+    "health": 121,
+    "mobility": 60
+  },
+  {
+    "rank": 59,
+    "city": "Ulsan",
+    "country": "South Korea",
+    "total_points": 776,
+    "citizens": 204,
+    "governance": 160,
+    "environment": 115,
+    "economy": 105,
+    "health": 109,
+    "mobility": 84
+  },
+  {
+    "rank": 60,
+    "city": "Florence",
+    "country": "Italy",
+    "total_points": 774,
+    "citizens": 154,
+    "governance": 198,
+    "environment": 146,
+    "economy": 29,
+    "health": 161,
+    "mobility": 86
+  },
+  {
+    "rank": 60,
+    "city": "Bergen",
+    "country": "Norway",
+    "total_points": 774,
+    "citizens": 191,
+    "governance": 143,
+    "environment": 120,
+    "economy": 101,
+    "health": 159,
+    "mobility": 61
+  },
+  {
+    "rank": 62,
+    "city": "Vilnus",
+    "country": "Lithuania",
+    "total_points": 773,
+    "citizens": 174,
+    "governance": 175,
+    "environment": 150,
+    "economy": 46,
+    "health": 127,
+    "mobility": 101
+  },
+  {
+    "rank": 63,
+    "city": "York",
+    "country": "United Kingdom",
+    "total_points": 771,
+    "citizens": 153,
+    "governance": 164,
+    "environment": 179,
+    "economy": 80,
+    "health": 116,
+    "mobility": 79
+  },
+  {
+    "rank": 63,
+    "city": "Columbus, OH",
+    "country": "United States",
+    "total_points": 771,
+    "citizens": 166,
+    "governance": 138,
+    "environment": 179,
+    "economy": 92,
+    "health": 100,
+    "mobility": 96
+  },
+  {
+    "rank": 65,
+    "city": "The Hague",
+    "country": "Netherlands",
+    "total_points": 769,
+    "citizens": 146,
+    "governance": 139,
+    "environment": 170,
+    "economy": 82,
+    "health": 173,
+    "mobility": 59
+  },
+  {
+    "rank": 66,
+    "city": "Hannover",
+    "country": "Germany",
+    "total_points": 768,
+    "citizens": 188,
+    "governance": 161,
+    "environment": 127,
+    "economy": 68,
+    "health": 139,
+    "mobility": 85
+  },
+  {
+    "rank": 67,
+    "city": "Bologna",
+    "country": "Italy",
+    "total_points": 767,
+    "citizens": 183,
+    "governance": 193,
+    "environment": 92,
+    "economy": 56,
+    "health": 142,
+    "mobility": 102
+  },
+  {
+    "rank": 67,
+    "city": "Melbourne",
+    "country": "Australia",
+    "total_points": 767,
+    "citizens": 211,
+    "governance": 164,
+    "environment": 112,
+    "economy": 58,
+    "health": 115,
+    "mobility": 106
+  },
+  {
+    "rank": 69,
+    "city": "Cork",
+    "country": "Ireland",
+    "total_points": 766,
+    "citizens": 121,
+    "governance": 136,
+    "environment": 178,
+    "economy": 67,
+    "health": 163,
+    "mobility": 100
+  },
+  {
+    "rank": 70,
+    "city": "Los Angeles, CA",
+    "country": "United States",
+    "total_points": 759,
+    "citizens": 135,
+    "governance": 178,
+    "environment": 133,
+    "economy": 113,
+    "health": 101,
+    "mobility": 98
+  },
+  {
+    "rank": 70,
+    "city": "Kaunas",
+    "country": "Lithuania",
+    "total_points": 759,
+    "citizens": 151,
+    "governance": 204,
+    "environment": 138,
+    "economy": 51,
+    "health": 110,
+    "mobility": 106
+  },
+  {
+    "rank": 72,
+    "city": "Incheon",
+    "country": "South Korea",
+    "total_points": 756,
+    "citizens": 190,
+    "governance": 174,
+    "environment": 121,
+    "economy": 79,
+    "health": 108,
+    "mobility": 84
+  },
+  {
+    "rank": 72,
+    "city": "Vasteras",
+    "country": "Sweden",
+    "total_points": 756,
+    "citizens": 170,
+    "governance": 171,
+    "environment": 129,
+    "economy": 72,
+    "health": 139,
+    "mobility": 75
+  },
+  {
+    "rank": 74,
+    "city": "Buenos Aires",
+    "country": "Argentina",
+    "total_points": 756,
+    "citizens": 163,
+    "governance": 195,
+    "environment": 144,
+    "economy": 74,
+    "health": 78,
+    "mobility": 102
+  },
+  {
+    "rank": 75,
+    "city": "Sydney",
+    "country": "Australia",
+    "total_points": 754,
+    "citizens": 152,
+    "governance": 167,
+    "environment": 167,
+    "economy": 60,
+    "health": 116,
+    "mobility": 92
+  },
+  {
+    "rank": 75,
+    "city": "Hsinchu",
+    "country": "Taiwan",
+    "total_points": 754,
+    "citizens": 116,
+    "governance": 183,
+    "environment": 149,
+    "economy": 136,
+    "health": 93,
+    "mobility": 77
+  },
+  {
+    "rank": 77,
+    "city": "Luxembourg",
+    "country": "Luxembourg",
+    "total_points": 752,
+    "citizens": 177,
+    "governance": 134,
+    "environment": 145,
+    "economy": 109,
+    "health": 126,
+    "mobility": 61
+  },
+  {
+    "rank": 78,
+    "city": "Gothenburg",
+    "country": "Sweden",
+    "total_points": 751,
+    "citizens": 203,
+    "governance": 142,
+    "environment": 140,
+    "economy": 74,
+    "health": 132,
+    "mobility": 60
+  },
+  {
+    "rank": 78,
+    "city": "Brisbane",
+    "country": "Australia",
+    "total_points": 751,
+    "citizens": 184,
+    "governance": 163,
+    "environment": 131,
+    "economy": 63,
+    "health": 124,
+    "mobility": 86
+  },
+  {
+    "rank": 80,
+    "city": "Seattle, WA",
+    "country": "United States",
+    "total_points": 750,
+    "citizens": 145,
+    "governance": 178,
+    "environment": 134,
+    "economy": 115,
+    "health": 96,
+    "mobility": 83
+  },
+  {
+    "rank": 81,
+    "city": "Mechelen",
+    "country": "Belgium",
+    "total_points": 749,
+    "citizens": 180,
+    "governance": 165,
+    "environment": 91,
+    "economy": 86,
+    "health": 138,
+    "mobility": 89
+  },
+  {
+    "rank": 82,
+    "city": "Frankfurt",
+    "country": "Germany",
+    "total_points": 743,
+    "citizens": 192,
+    "governance": 154,
+    "environment": 98,
+    "economy": 74,
+    "health": 142,
+    "mobility": 84
+  },
+  {
+    "rank": 83,
+    "city": "Reading",
+    "country": "United Kingdom",
+    "total_points": 742,
+    "citizens": 168,
+    "governance": 167,
+    "environment": 112,
+    "economy": 101,
+    "health": 117,
+    "mobility": 78
+  },
+  {
+    "rank": 84,
+    "city": "Baltimore, MD",
+    "country": "United States",
+    "total_points": 741,
+    "citizens": 186,
+    "governance": 153,
+    "environment": 135,
+    "economy": 130,
+    "health": 73,
+    "mobility": 63
+  },
+  {
+    "rank": 84,
+    "city": "Zaragoza",
+    "country": "Spain",
+    "total_points": 741,
+    "citizens": 126,
+    "governance": 141,
+    "environment": 155,
+    "economy": 64,
+    "health": 154,
+    "mobility": 101
+  },
+  {
+    "rank": 86,
+    "city": "Lausanne",
+    "country": "Switzerland",
+    "total_points": 735,
+    "citizens": 174,
+    "governance": 139,
+    "environment": 156,
+    "economy": 95,
+    "health": 114,
+    "mobility": 59
+  },
+  {
+    "rank": 87,
+    "city": "Changhua",
+    "country": "Taiwan",
+    "total_points": 733,
+    "citizens": 166,
+    "governance": 188,
+    "environment": 157,
+    "economy": 101,
+    "health": 52,
+    "mobility": 69
+  },
+  {
+    "rank": 88,
+    "city": "Gold Coast",
+    "country": "Australia",
+    "total_points": 730,
+    "citizens": 167,
+    "governance": 166,
+    "environment": 132,
+    "economy": 74,
+    "health": 120,
+    "mobility": 72
+  },
+  {
+    "rank": 89,
+    "city": "San Antonio, TX",
+    "country": "United States",
+    "total_points": 726,
+    "citizens": 154,
+    "governance": 162,
+    "environment": 131,
+    "economy": 84,
+    "health": 99,
+    "mobility": 97
+  },
+  {
+    "rank": 90,
+    "city": "Lisbon",
+    "country": "Portugal",
+    "total_points": 726,
+    "citizens": 164,
+    "governance": 172,
+    "environment": 76,
+    "economy": 71,
+    "health": 161,
+    "mobility": 82
+  },
+  {
+    "rank": 91,
+    "city": "Wellington",
+    "country": "New Zealand",
+    "total_points": 725,
+    "citizens": 154,
+    "governance": 164,
+    "environment": 56,
+    "economy": 95,
+    "health": 161,
+    "mobility": 95
+  },
+  {
+    "rank": 91,
+    "city": "Kaohsiung",
+    "country": "Taiwan",
+    "total_points": 725,
+    "citizens": 107,
+    "governance": 199,
+    "environment": 158,
+    "economy": 85,
+    "health": 91,
+    "mobility": 86
+  },
+  {
+    "rank": 93,
+    "city": "Aalter",
+    "country": "Belgium",
+    "total_points": 721,
+    "citizens": 169,
+    "governance": 162,
+    "environment": 110,
+    "economy": 76,
+    "health": 133,
+    "mobility": 71
+  },
+  {
+    "rank": 94,
+    "city": "Trondheim",
+    "country": "Norway",
+    "total_points": 720,
+    "citizens": 134,
+    "governance": 140,
+    "environment": 117,
+    "economy": 109,
+    "health": 159,
+    "mobility": 60
+  },
+  {
+    "rank": 94,
+    "city": "Aachen",
+    "country": "Germany",
+    "total_points": 720,
+    "citizens": 197,
+    "governance": 160,
+    "environment": 84,
+    "economy": 66,
+    "health": 146,
+    "mobility": 67
+  },
+  {
+    "rank": 96,
+    "city": "Tampere",
+    "country": "Finland",
+    "total_points": 718,
+    "citizens": 198,
+    "governance": 140,
+    "environment": 125,
+    "economy": 71,
+    "health": 124,
+    "mobility": 60
+  },
+  {
+    "rank": 96,
+    "city": "Valencia",
+    "country": "Spain",
+    "total_points": 718,
+    "citizens": 142,
+    "governance": 175,
+    "environment": 100,
+    "economy": 58,
+    "health": 161,
+    "mobility": 82
+  },
+  {
+    "rank": 96,
+    "city": "Nashville, TN",
+    "country": "United States",
+    "total_points": 718,
+    "citizens": 138,
+    "governance": 155,
+    "environment": 83,
+    "economy": 162,
+    "health": 102,
+    "mobility": 77
+  },
+  {
+    "rank": 99,
+    "city": "Turku",
+    "country": "Finland",
+    "total_points": 716,
+    "citizens": 201,
+    "governance": 142,
+    "environment": 125,
+    "economy": 62,
+    "health": 126,
+    "mobility": 60
+  },
+  {
+    "rank": 100,
+    "city": "Tel Aviv",
+    "country": "Israel",
+    "total_points": 715,
+    "citizens": 166,
+    "governance": 145,
+    "environment": 115,
+    "economy": 92,
+    "health": 136,
+    "mobility": 61
+  },
+  {
+    "rank": 101,
+    "city": "Jonkoping",
+    "country": "Sweden",
+    "total_points": 713,
+    "citizens": 170,
+    "governance": 140,
+    "environment": 127,
+    "economy": 79,
+    "health": 138,
+    "mobility": 60
+  },
+  {
+    "rank": 101,
+    "city": "Manchester",
+    "country": "United Kingdom",
+    "total_points": 713,
+    "citizens": 173,
+    "governance": 130,
+    "environment": 163,
+    "economy": 71,
+    "health": 89,
+    "mobility": 86
+  },
+  {
+    "rank": 103,
+    "city": "Bristol",
+    "country": "United Kingdom",
+    "total_points": 708,
+    "citizens": 115,
+    "governance": 150,
+    "environment": 187,
+    "economy": 69,
+    "health": 103,
+    "mobility": 83
+  },
+  {
+    "rank": 104,
+    "city": "Maribor",
+    "country": "Slovenia",
+    "total_points": 708,
+    "citizens": 206,
+    "governance": 162,
+    "environment": 61,
+    "economy": 50,
+    "health": 131,
+    "mobility": 99
+  },
+  {
+    "rank": 105,
+    "city": "Bremen",
+    "country": "Germany",
+    "total_points": 707,
+    "citizens": 168,
+    "governance": 177,
+    "environment": 99,
+    "economy": 53,
+    "health": 135,
+    "mobility": 76
+  },
+  {
+    "rank": 105,
+    "city": "Innsbruck",
+    "country": "Austria",
+    "total_points": 707,
+    "citizens": 165,
+    "governance": 121,
+    "environment": 146,
+    "economy": 80,
+    "health": 140,
+    "mobility": 56
+  },
+  {
+    "rank": 107,
+    "city": "Alesund",
+    "country": "Norway",
+    "total_points": 706,
+    "citizens": 158,
+    "governance": 142,
+    "environment": 118,
+    "economy": 84,
+    "health": 143,
+    "mobility": 60
+  },
+  {
+    "rank": 108,
+    "city": "Arendal",
+    "country": "Norway",
+    "total_points": 703,
+    "citizens": 155,
+    "governance": 139,
+    "environment": 116,
+    "economy": 108,
+    "health": 140,
+    "mobility": 45
+  },
+  {
+    "rank": 109,
+    "city": "Tallinn",
+    "country": "Estonia",
+    "total_points": 702,
+    "citizens": 174,
+    "governance": 134,
+    "environment": 131,
+    "economy": 55,
+    "health": 148,
+    "mobility": 61
+  },
+  {
+    "rank": 110,
+    "city": "Wuhan",
+    "country": "China",
+    "total_points": 700,
+    "citizens": 110,
+    "governance": 205,
+    "environment": 95,
+    "economy": 103,
+    "health": 107,
+    "mobility": 80
+  },
+  {
+    "rank": 110,
+    "city": "Budapest",
+    "country": "Hungary",
+    "total_points": 700,
+    "citizens": 173,
+    "governance": 162,
+    "environment": 105,
+    "economy": 83,
+    "health": 58,
+    "mobility": 119
+  },
+  {
+    "rank": 112,
+    "city": "Indianapolis, IN",
+    "country": "United States",
+    "total_points": 699,
+    "citizens": 109,
+    "governance": 155,
+    "environment": 128,
+    "economy": 137,
+    "health": 82,
+    "mobility": 88
+  },
+  {
+    "rank": 113,
+    "city": "Taichung",
+    "country": "Taiwan",
+    "total_points": 698,
+    "citizens": 103,
+    "governance": 198,
+    "environment": 137,
+    "economy": 82,
+    "health": 90,
+    "mobility": 88
+  },
+  {
+    "rank": 114,
+    "city": "Christchurch",
+    "country": "New Zealand",
+    "total_points": 696,
+    "citizens": 101,
+    "governance": 180,
+    "environment": 118,
+    "economy": 54,
+    "health": 146,
+    "mobility": 97
+  },
+  {
+    "rank": 115,
+    "city": "Taoyan",
+    "country": "Taiwan",
+    "total_points": 695,
+    "citizens": 106,
+    "governance": 177,
+    "environment": 147,
+    "economy": 94,
+    "health": 89,
+    "mobility": 81
+  },
+  {
+    "rank": 116,
+    "city": "Rome",
+    "country": "Italy",
+    "total_points": 693,
+    "citizens": 136,
+    "governance": 147,
+    "environment": 104,
+    "economy": 56,
+    "health": 156,
+    "mobility": 94
+  },
+  {
+    "rank": 116,
+    "city": "Malmo",
+    "country": "Sweden",
+    "total_points": 693,
+    "citizens": 166,
+    "governance": 137,
+    "environment": 135,
+    "economy": 78,
+    "health": 119,
+    "mobility": 58
+  },
+  {
+    "rank": 118,
+    "city": "Oxford",
+    "country": "United Kingdom",
+    "total_points": 692,
+    "citizens": 156,
+    "governance": 191,
+    "environment": 99,
+    "economy": 72,
+    "health": 104,
+    "mobility": 71
+  },
+  {
+    "rank": 119,
+    "city": "San Jose, CA",
+    "country": "United States",
+    "total_points": 689,
+    "citizens": 135,
+    "governance": 124,
+    "environment": 117,
+    "economy": 120,
+    "health": 102,
+    "mobility": 91
+  },
+  {
+    "rank": 120,
+    "city": "Monaco",
+    "country": "Monaco",
+    "total_points": 687,
+    "citizens": 123,
+    "governance": 94,
+    "environment": 130,
+    "economy": 132,
+    "health": 161,
+    "mobility": 47
+  },
+  {
+    "rank": 120,
+    "city": "Namur",
+    "country": "Belgium",
+    "total_points": 687,
+    "citizens": 198,
+    "governance": 145,
+    "environment": 87,
+    "economy": 62,
+    "health": 132,
+    "mobility": 63
+  },
+  {
+    "rank": 122,
+    "city": "Genoa",
+    "country": "Italy",
+    "total_points": 683,
+    "citizens": 91,
+    "governance": 164,
+    "environment": 138,
+    "economy": 34,
+    "health": 152,
+    "mobility": 104
+  },
+  {
+    "rank": 122,
+    "city": "Gdynia",
+    "country": "Poland",
+    "total_points": 683,
+    "citizens": 144,
+    "governance": 175,
+    "environment": 47,
+    "economy": 71,
+    "health": 133,
+    "mobility": 113
+  },
+  {
+    "rank": 122,
+    "city": "Lucerne",
+    "country": "Switzerland",
+    "total_points": 683,
+    "citizens": 136,
+    "governance": 137,
+    "environment": 166,
+    "economy": 94,
+    "health": 101,
+    "mobility": 49
+  },
+  {
+    "rank": 125,
+    "city": "Oulu",
+    "country": "Finland",
+    "total_points": 682,
+    "citizens": 170,
+    "governance": 139,
+    "environment": 121,
+    "economy": 70,
+    "health": 123,
+    "mobility": 59
+  },
+  {
+    "rank": 126,
+    "city": "Eskilstuna",
+    "country": "Sweden",
+    "total_points": 680,
+    "citizens": 158,
+    "governance": 163,
+    "environment": 127,
+    "economy": 37,
+    "health": 135,
+    "mobility": 60
+  },
+  {
+    "rank": 127,
+    "city": "Istanbul",
+    "country": "Turkey",
+    "total_points": 678,
+    "citizens": 98,
+    "governance": 195,
+    "environment": 120,
+    "economy": 83,
+    "health": 97,
+    "mobility": 84
+  },
+  {
+    "rank": 128,
+    "city": "Shanghai",
+    "country": "China",
+    "total_points": 677,
+    "citizens": 123,
+    "governance": 202,
+    "environment": 35,
+    "economy": 124,
+    "health": 125,
+    "mobility": 68
+  },
+  {
+    "rank": 129,
+    "city": "Birmingham",
+    "country": "United Kingdom",
+    "total_points": 675,
+    "citizens": 146,
+    "governance": 164,
+    "environment": 148,
+    "economy": 54,
+    "health": 78,
+    "mobility": 85
+  },
+  {
+    "rank": 129,
+    "city": "Osaka",
+    "country": "Japan",
+    "total_points": 675,
+    "citizens": 161,
+    "governance": 145,
+    "environment": 62,
+    "economy": 101,
+    "health": 141,
+    "mobility": 65
+  },
+  {
+    "rank": 131,
+    "city": "Boston, MA",
+    "country": "United States",
+    "total_points": 672,
+    "citizens": 169,
+    "governance": 154,
+    "environment": 100,
+    "economy": 90,
+    "health": 105,
+    "mobility": 55
+  },
+  {
+    "rank": 132,
+    "city": "Bialystok",
+    "country": "Poland",
+    "total_points": 671,
+    "citizens": 146,
+    "governance": 168,
+    "environment": 61,
+    "economy": 66,
+    "health": 132,
+    "mobility": 98
+  },
+  {
+    "rank": 132,
+    "city": " Madrid",
+    "country": "Spain",
+    "total_points": 671,
+    "citizens": 125,
+    "governance": 166,
+    "environment": 90,
+    "economy": 39,
+    "health": 168,
+    "mobility": 83
+  },
+  {
+    "rank": 134,
+    "city": "Tainan",
+    "country": "Taiwan",
+    "total_points": 669,
+    "citizens": 108,
+    "governance": 194,
+    "environment": 124,
+    "economy": 81,
+    "health": 87,
+    "mobility": 74
+  },
+  {
+    "rank": 135,
+    "city": "Hobart",
+    "country": "Australia",
+    "total_points": 668,
+    "citizens": 138,
+    "governance": 159,
+    "environment": 116,
+    "economy": 49,
+    "health": 123,
+    "mobility": 83
+  },
+  {
+    "rank": 136,
+    "city": "Dalian",
+    "country": "China",
+    "total_points": 658,
+    "citizens": 87,
+    "governance": 172,
+    "environment": 91,
+    "economy": 110,
+    "health": 111,
+    "mobility": 86
+  },
+  {
+    "rank": 137,
+    "city": "Jinan",
+    "country": "China",
+    "total_points": 654,
+    "citizens": 90,
+    "governance": 198,
+    "environment": 74,
+    "economy": 109,
+    "health": 113,
+    "mobility": 71
+  },
+  {
+    "rank": 138,
+    "city": "Riyadh",
+    "country": "Saudi Arabia",
+    "total_points": 651,
+    "citizens": 44,
+    "governance": 201,
+    "environment": 106,
+    "economy": 54,
+    "health": 157,
+    "mobility": 88
+  },
+  {
+    "rank": 139,
+    "city": "Gdansk",
+    "country": "Poland",
+    "total_points": 648,
+    "citizens": 130,
+    "governance": 160,
+    "environment": 51,
+    "economy": 66,
+    "health": 125,
+    "mobility": 116
+  },
+  {
+    "rank": 139,
+    "city": "Andorra La Vella",
+    "country": "Andorra",
+    "total_points": 648,
+    "citizens": 139,
+    "governance": 158,
+    "environment": 47,
+    "economy": 101,
+    "health": 133,
+    "mobility": 70
+  },
+  {
+    "rank": 141,
+    "city": "Portland, OR",
+    "country": "United States",
+    "total_points": 647,
+    "citizens": 121,
+    "governance": 178,
+    "environment": 69,
+    "economy": 97,
+    "health": 99,
+    "mobility": 83
+  },
+  {
+    "rank": 142,
+    "city": "Debrecen",
+    "country": "Hungary",
+    "total_points": 646,
+    "citizens": 160,
+    "governance": 159,
+    "environment": 137,
+    "economy": 45,
+    "health": 57,
+    "mobility": 88
+  },
+  {
+    "rank": 143,
+    "city": "Izmir",
+    "country": "Turkey",
+    "total_points": 645,
+    "citizens": 104,
+    "governance": 185,
+    "environment": 127,
+    "economy": 55,
+    "health": 114,
+    "mobility": 61
+  },
+  {
+    "rank": 144,
+    "city": "Leipzig",
+    "country": "Germany",
+    "total_points": 640,
+    "citizens": 165,
+    "governance": 168,
+    "environment": 34,
+    "economy": 65,
+    "health": 140,
+    "mobility": 69
+  },
+  {
+    "rank": 145,
+    "city": "Cambridge",
+    "country": "United Kingdom",
+    "total_points": 638,
+    "citizens": 168,
+    "governance": 161,
+    "environment": 71,
+    "economy": 70,
+    "health": 95,
+    "mobility": 74
+  },
+  {
+    "rank": 146,
+    "city": "Darwin",
+    "country": "Australia",
+    "total_points": 631,
+    "citizens": 129,
+    "governance": 146,
+    "environment": 96,
+    "economy": 73,
+    "health": 111,
+    "mobility": 75
+  },
+  {
+    "rank": 147,
+    "city": "Cracow",
+    "country": "Poland",
+    "total_points": 629,
+    "citizens": 132,
+    "governance": 158,
+    "environment": 29,
+    "economy": 72,
+    "health": 132,
+    "mobility": 105
+  },
+  {
+    "rank": 148,
+    "city": "Halifax",
+    "country": "Canada",
+    "total_points": 627,
+    "citizens": 110,
+    "governance": 171,
+    "environment": 85,
+    "economy": 54,
+    "health": 118,
+    "mobility": 89
+  },
+  {
+    "rank": 148,
+    "city": "Kiel",
+    "country": "Germany",
+    "total_points": 627,
+    "citizens": 153,
+    "governance": 149,
+    "environment": 53,
+    "economy": 64,
+    "health": 142,
+    "mobility": 67
+  },
+  {
+    "rank": 150,
+    "city": "Parnu",
+    "country": "Estonia",
+    "total_points": 626,
+    "citizens": 149,
+    "governance": 112,
+    "environment": 116,
+    "economy": 54,
+    "health": 147,
+    "mobility": 47
+  },
+  {
+    "rank": 151,
+    "city": "Ioannina",
+    "country": "Greece",
+    "total_points": 624,
+    "citizens": 202,
+    "governance": 154,
+    "environment": 4,
+    "economy": 97,
+    "health": 117,
+    "mobility": 50
+  },
+  {
+    "rank": 152,
+    "city": "Palermo",
+    "country": "Italy",
+    "total_points": 623,
+    "citizens": 102,
+    "governance": 167,
+    "environment": 125,
+    "economy": 12,
+    "health": 154,
+    "mobility": 63
+  },
+  {
+    "rank": 153,
+    "city": "Prague",
+    "country": "Czech Republic",
+    "total_points": 620,
+    "citizens": 91,
+    "governance": 145,
+    "environment": 129,
+    "economy": 64,
+    "health": 131,
+    "mobility": 61
+  },
+  {
+    "rank": 153,
+    "city": "Sapporo",
+    "country": "Japan",
+    "total_points": 620,
+    "citizens": 153,
+    "governance": 122,
+    "environment": 47,
+    "economy": 99,
+    "health": 143,
+    "mobility": 56
+  },
+  {
+    "rank": 155,
+    "city": "Lublin",
+    "country": "Poland",
+    "total_points": 618,
+    "citizens": 141,
+    "governance": 162,
+    "environment": 48,
+    "economy": 65,
+    "health": 129,
+    "mobility": 75
+  },
+  {
+    "rank": 155,
+    "city": "Suzhou",
+    "country": "China",
+    "total_points": 618,
+    "citizens": 103,
+    "governance": 196,
+    "environment": 33,
+    "economy": 99,
+    "health": 106,
+    "mobility": 82
+  },
+  {
+    "rank": 155,
+    "city": "Sofia",
+    "country": "Bulgaria",
+    "total_points": 618,
+    "citizens": 70,
+    "governance": 158,
+    "environment": 96,
+    "economy": 84,
+    "health": 94,
+    "mobility": 116
+  },
+  {
+    "rank": 158,
+    "city": "Bordeaux",
+    "country": "France",
+    "total_points": 617,
+    "citizens": 138,
+    "governance": 142,
+    "environment": 126,
+    "economy": 63,
+    "health": 88,
+    "mobility": 61
+  },
+  {
+    "rank": 159,
+    "city": "Valetta",
+    "country": "Malta",
+    "total_points": 613,
+    "citizens": 103,
+    "governance": 134,
+    "environment": 119,
+    "economy": 81,
+    "health": 115,
+    "mobility": 61
+  },
+  {
+    "rank": 160,
+    "city": "Toronto",
+    "country": "Canada",
+    "total_points": 613,
+    "citizens": 109,
+    "governance": 142,
+    "environment": 121,
+    "economy": 61,
+    "health": 117,
+    "mobility": 63
+  },
+  {
+    "rank": 161,
+    "city": "Edinburgh",
+    "country": "United Kingdom",
+    "total_points": 611,
+    "citizens": 118,
+    "governance": 133,
+    "environment": 132,
+    "economy": 66,
+    "health": 106,
+    "mobility": 56
+  },
+  {
+    "rank": 161,
+    "city": "Bydgoszcz",
+    "country": "Poland",
+    "total_points": 611,
+    "citizens": 154,
+    "governance": 152,
+    "environment": 34,
+    "economy": 80,
+    "health": 125,
+    "mobility": 65
+  },
+  {
+    "rank": 163,
+    "city": "Lubeck",
+    "country": "Germany",
+    "total_points": 607,
+    "citizens": 145,
+    "governance": 142,
+    "environment": 5,
+    "economy": 63,
+    "health": 142,
+    "mobility": 110
+  },
+  {
+    "rank": 164,
+    "city": "Kobe",
+    "country": "Japan",
+    "total_points": 606,
+    "citizens": 144,
+    "governance": 121,
+    "environment": 47,
+    "economy": 98,
+    "health": 141,
+    "mobility": 56
+  },
+  {
+    "rank": 165,
+    "city": "Perth",
+    "country": "Australia",
+    "total_points": 604,
+    "citizens": 165,
+    "governance": 124,
+    "environment": 50,
+    "economy": 58,
+    "health": 120,
+    "mobility": 86
+  },
+  {
+    "rank": 166,
+    "city": "Vigo",
+    "country": "Spain",
+    "total_points": 603,
+    "citizens": 136,
+    "governance": 137,
+    "environment": 53,
+    "economy": 44,
+    "health": 149,
+    "mobility": 83
+  },
+  {
+    "rank": 167,
+    "city": "Kuala Lumpur",
+    "country": "Malaysia",
+    "total_points": 602,
+    "citizens": 106,
+    "governance": 145,
+    "environment": 86,
+    "economy": 115,
+    "health": 75,
+    "mobility": 75
+  },
+  {
+    "rank": 168,
+    "city": "Chengdu",
+    "country": "China",
+    "total_points": 601,
+    "citizens": 105,
+    "governance": 194,
+    "environment": 43,
+    "economy": 96,
+    "health": 113,
+    "mobility": 51
+  },
+  {
+    "rank": 169,
+    "city": "Quezon City",
+    "country": "Philippines",
+    "total_points": 598,
+    "citizens": 91,
+    "governance": 120,
+    "environment": 139,
+    "economy": 66,
+    "health": 113,
+    "mobility": 68
+  },
+  {
+    "rank": 170,
+    "city": "Moscow",
+    "country": "Russia",
+    "total_points": 597,
+    "citizens": 78,
+    "governance": 167,
+    "environment": 45,
+    "economy": 79,
+    "health": 151,
+    "mobility": 78
+  },
+  {
+    "rank": 170,
+    "city": "Naples",
+    "country": "Italy",
+    "total_points": 597,
+    "citizens": 66,
+    "governance": 132,
+    "environment": 138,
+    "economy": 46,
+    "health": 135,
+    "mobility": 80
+  },
+  {
+    "rank": 172,
+    "city": "Chiayi",
+    "country": "Taiwan",
+    "total_points": 591,
+    "citizens": 102,
+    "governance": 188,
+    "environment": 75,
+    "economy": 73,
+    "health": 80,
+    "mobility": 72
+  },
+  {
+    "rank": 172,
+    "city": "Keelung",
+    "country": "Taiwan",
+    "total_points": 591,
+    "citizens": 109,
+    "governance": 122,
+    "environment": 125,
+    "economy": 80,
+    "health": 90,
+    "mobility": 65
+  },
+  {
+    "rank": 174,
+    "city": "Cebu City",
+    "country": "Phillippines",
+    "total_points": 586,
+    "citizens": 68,
+    "governance": 161,
+    "environment": 131,
+    "economy": 42,
+    "health": 122,
+    "mobility": 63
+  },
+  {
+    "rank": 175,
+    "city": "Warsaw",
+    "country": "Poland",
+    "total_points": 585,
+    "citizens": 143,
+    "governance": 137,
+    "environment": 43,
+    "economy": 63,
+    "health": 129,
+    "mobility": 69
+  },
+  {
+    "rank": 176,
+    "city": "Orlando, FL",
+    "country": "United States",
+    "total_points": 582,
+    "citizens": 91,
+    "governance": 133,
+    "environment": 107,
+    "economy": 94,
+    "health": 93,
+    "mobility": 64
+  },
+  {
+    "rank": 176,
+    "city": "Brno",
+    "country": "Czech Republic",
+    "total_points": 582,
+    "citizens": 83,
+    "governance": 143,
+    "environment": 116,
+    "economy": 50,
+    "health": 129,
+    "mobility": 61
+  },
+  {
+    "rank": 178,
+    "city": "Ottawa",
+    "country": "Canada",
+    "total_points": 579,
+    "citizens": 71,
+    "governance": 140,
+    "environment": 119,
+    "economy": 61,
+    "health": 129,
+    "mobility": 60
+  },
+  {
+    "rank": 179,
+    "city": "Roeselare",
+    "country": "Belgium",
+    "total_points": 578,
+    "citizens": 183,
+    "governance": 91,
+    "environment": 25,
+    "economy": 81,
+    "health": 134,
+    "mobility": 64
+  },
+  {
+    "rank": 180,
+    "city": "Sopot",
+    "country": "Poland",
+    "total_points": 575,
+    "citizens": 158,
+    "governance": 134,
+    "environment": 28,
+    "economy": 63,
+    "health": 124,
+    "mobility": 69
+  },
+  {
+    "rank": 181,
+    "city": "Phoenix, AZ",
+    "country": "United States",
+    "total_points": 574,
+    "citizens": 92,
+    "governance": 137,
+    "environment": 119,
+    "economy": 86,
+    "health": 71,
+    "mobility": 69
+  },
+  {
+    "rank": 182,
+    "city": "Newcastle",
+    "country": "United Kingdom",
+    "total_points": 574,
+    "citizens": 118,
+    "governance": 128,
+    "environment": 85,
+    "economy": 53,
+    "health": 106,
+    "mobility": 85
+  },
+  {
+    "rank": 183,
+    "city": "Nicosia",
+    "country": "Cyprus",
+    "total_points": 573,
+    "citizens": 154,
+    "governance": 116,
+    "environment": 39,
+    "economy": 87,
+    "health": 96,
+    "mobility": 82
+  },
+  {
+    "rank": 183,
+    "city": "Athens",
+    "country": "Greece",
+    "total_points": 573,
+    "citizens": 133,
+    "governance": 124,
+    "environment": 93,
+    "economy": 63,
+    "health": 110,
+    "mobility": 50
+  },
+  {
+    "rank": 183,
+    "city": "Petaling Jaya",
+    "country": "Malaysia",
+    "total_points": 573,
+    "citizens": 127,
+    "governance": 141,
+    "environment": 37,
+    "economy": 95,
+    "health": 93,
+    "mobility": 80
+  },
+  {
+    "rank": 186,
+    "city": "Chisinau",
+    "country": "Moldova",
+    "total_points": 570,
+    "citizens": 160,
+    "governance": 140,
+    "environment": 51,
+    "economy": 21,
+    "health": 115,
+    "mobility": 82
+  },
+  {
+    "rank": 187,
+    "city": "Quito",
+    "country": "Ecuador",
+    "total_points": 569,
+    "citizens": 9,
+    "governance": 184,
+    "environment": 147,
+    "economy": 80,
+    "health": 71,
+    "mobility": 80
+  },
+  {
+    "rank": 188,
+    "city": "Leicester",
+    "country": "United Kingdom",
+    "total_points": 566,
+    "citizens": 81,
+    "governance": 130,
+    "environment": 129,
+    "economy": 64,
+    "health": 100,
+    "mobility": 62
+  },
+  {
+    "rank": 189,
+    "city": "Czestochowa",
+    "country": "Poland",
+    "total_points": 564,
+    "citizens": 118,
+    "governance": 150,
+    "environment": 11,
+    "economy": 68,
+    "health": 122,
+    "mobility": 95
+  },
+  {
+    "rank": 190,
+    "city": "Kunming",
+    "country": "China",
+    "total_points": 562,
+    "citizens": 72,
+    "governance": 160,
+    "environment": 52,
+    "economy": 101,
+    "health": 115,
+    "mobility": 63
+  },
+  {
+    "rank": 191,
+    "city": "Podgorica",
+    "country": "Montenegro",
+    "total_points": 561,
+    "citizens": 89,
+    "governance": 134,
+    "environment": 78,
+    "economy": 81,
+    "health": 119,
+    "mobility": 61
+  },
+  {
+    "rank": 191,
+    "city": "Guadalajara",
+    "country": "Mexico",
+    "total_points": 561,
+    "citizens": 94,
+    "governance": 143,
+    "environment": 119,
+    "economy": 15,
+    "health": 113,
+    "mobility": 78
+  },
+  {
+    "rank": 193,
+    "city": "Quebec City",
+    "country": "Canada",
+    "total_points": 556,
+    "citizens": 69,
+    "governance": 120,
+    "environment": 117,
+    "economy": 60,
+    "health": 135,
+    "mobility": 55
+  },
+  {
+    "rank": 193,
+    "city": "Makati City",
+    "country": "Philippines",
+    "total_points": 556,
+    "citizens": 43,
+    "governance": 157,
+    "environment": 98,
+    "economy": 75,
+    "health": 112,
+    "mobility": 71
+  },
+  {
+    "rank": 193,
+    "city": "Riga",
+    "country": "Latvia",
+    "total_points": 556,
+    "citizens": 89,
+    "governance": 134,
+    "environment": 130,
+    "economy": 27,
+    "health": 116,
+    "mobility": 61
+  },
+  {
+    "rank": 193,
+    "city": "Bridgetown",
+    "country": "Barbados",
+    "total_points": 556,
+    "citizens": 85,
+    "governance": 147,
+    "environment": 88,
+    "economy": 57,
+    "health": 124,
+    "mobility": 55
+  },
+  {
+    "rank": 197,
+    "city": "Panama City",
+    "country": "Panama",
+    "total_points": 555,
+    "citizens": 82,
+    "governance": 134,
+    "environment": 127,
+    "economy": 56,
+    "health": 95,
+    "mobility": 61
+  },
+  {
+    "rank": 198,
+    "city": "Ankara",
+    "country": "Turkey",
+    "total_points": 552,
+    "citizens": 83,
+    "governance": 191,
+    "environment": 38,
+    "economy": 47,
+    "health": 104,
+    "mobility": 90
+  },
+  {
+    "rank": 198,
+    "city": "Houston, TX",
+    "country": "United States",
+    "total_points": 552,
+    "citizens": 116,
+    "governance": 129,
+    "environment": 38,
+    "economy": 85,
+    "health": 101,
+    "mobility": 84
+  },
+  {
+    "rank": 200,
+    "city": "Pula",
+    "country": "Croatia",
+    "total_points": 548,
+    "citizens": 137,
+    "governance": 133,
+    "environment": 71,
+    "economy": 64,
+    "health": 89,
+    "mobility": 55
+  }
+];
+
+        // Update slider values
+        const sliders = ['citizens', 'governance', 'environment', 'economy', 'health', 'mobility'];
+        sliders.forEach(slider => {
+            const input = document.getElementById(slider);
+            const display = document.getElementById(`${slider}-value`);
+            
+            input.addEventListener('input', (e) => {
+                display.textContent = e.target.value;
+            });
+        });
+
+        // Form submission
+        document.getElementById('scoreForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get input values
+            const inputScores = {
+                citizens: parseInt(document.getElementById('citizens').value),
+                governance: parseInt(document.getElementById('governance').value),
+                environment: parseInt(document.getElementById('environment').value),
+                economy: parseInt(document.getElementById('economy').value),
+                health: parseInt(document.getElementById('health').value),
+                mobility: parseInt(document.getElementById('mobility').value)
+            };
+
+            // Calculate total
+            const totalScore = Object.values(inputScores).reduce((a, b) => a + b, 0);
+
+            // Find closest city by calculating Euclidean distance
+            let closestCity = null;
+            let minDistance = Infinity;
+
+            cities.forEach(city => {
+                const distance = Math.sqrt(
+                    Math.pow(city.citizens - inputScores.citizens, 2) +
+                    Math.pow(city.governance - inputScores.governance, 2) +
+                    Math.pow(city.environment - inputScores.environment, 2) +
+                    Math.pow(city.economy - inputScores.economy, 2) +
+                    Math.pow(city.health - inputScores.health, 2) +
+                    Math.pow(city.mobility - inputScores.mobility, 2)
+                );
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestCity = city;
+                }
+            });
+
+            // Display result
+            document.getElementById('city-name').textContent = closestCity.city;
+            document.getElementById('country-name').textContent = closestCity.country;
+            document.getElementById('rank').textContent = closestCity.rank;
+            document.getElementById('total-score').textContent = totalScore;
+            document.getElementById('city-total-score').textContent = closestCity.total_points;
+            document.getElementById('result').classList.add('show');
+        });
+    </script>
+</body>
+</html>
